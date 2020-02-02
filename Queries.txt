@@ -1,0 +1,41 @@
+#I will specify what can be changed in the query by the user
+
+
+#2000,2005
+
+Select *from Banks where ClosingYear>2000&&ClosingYear<2005;
+
+
+#2000,2005
+Select region,count(region) as closedBanks from Banks INNER JOIN State ON State.name=Banks.ST where ClosingYear>2000&&ClosingYear<2005 GROUP BY region;
+
+#demsH,demsS
+SELECT * FROM Congress ORDER BY demsH+demsS DESC LIMIT 1;
+
+#12,2000
+SELECT * FROM ConsistedState WHERE State IN (SELECT name FROM State where electoralVotes>12)&& year=2000;
+
+#12,2000
+SELECT sum(democratic) as total_Democrats,sum(republican) as total_Republicans,sum(total_votes) as total FROM ConsistedState WHERE State IN (SELECT name FROM State where electoralVotes>12)&& year=2000;
+
+
+#12,2000
+SELECT * FROM ConsistedState WHERE State IN (SELECT name FROM State where electoralVotes<12)&& year=2000;
+
+#12,2000
+SELECT sum(democratic) as total_Democrats,sum(republican) as total_Republicans,sum(total_votes) as total FROM ConsistedState WHERE State IN (SELECT name FROM State where electoralVotes<12)&& year=2000;
+
+#democratic,NJ,2000
+"SELECT state,year, democratic FROM ConsistedState WHERE State ='NJ'&&year=2000;
+
+#West,2000
+SELECT democratic,republican,state,total_votes, electoralVotes FROM (SELECT * FROM ConsistedState WHERE State IN (SELECT name from State where region='West')&& year=2000&&democratic>republican)consis INNER JOIN State ON State.name=consis.state;
+
+#West,2000
+SELECT IF(rep.RepublicanCount>dem.DemocraticCount,'Republican',IF(dem.DemocraticCount>rep.RepublicanCount,'Democratic','Tied')) as winner,RepublicanCount,DemocraticCount FROM (SELECT IF (sum(electoralVotes)>0,sum(electoralVotes),0) as RepublicanCount FROM (SELECT * FROM ConsistedState WHERE State IN (SELECT name from State where region='West')&& year=2000&&republican>democratic)consis INNER JOIN State ON State.name=consis.state)rep,(SELECT IF(sum(electoralVotes)>0,sum(electoralVotes),0) as DemocraticCount FROM (SELECT * FROM ConsistedState WHERE State IN (SELECT name from State where region='West')&& year=2000&&democratic>republican)consis INNER JOIN State ON State.name=consis.state)dem;
+
+#NJ
+SELECT year, IF(year=2000,total_votes/2000pop,IF(year=2004,total_votes/2004pop,IF(year=2008,total_votes/2008pop,IF(year=2012,total_votes/2012pop,0))))*100 as percentVoted FROM (SELECT * from ConsistedState WHERE state='NJ')pop INNER JOIN Population ON pop.state=Population.state ORDER BY year;
+
+
+
